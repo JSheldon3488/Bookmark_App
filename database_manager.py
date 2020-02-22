@@ -15,3 +15,7 @@ class databaseManager:
             cursor = self.database.cursor()
             cursor.execute(statement, values or [])
             return cursor
+
+    def create_table(self, tablename, columns):
+        statement = "CREATE TABLE IF NOT EXITS" + tablename + "(" + ", ".join([f'{name} {type}' for name,type in columns.items()]) + ");"
+        self._execute(statement)
