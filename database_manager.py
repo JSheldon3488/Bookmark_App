@@ -1,4 +1,6 @@
-# Database layer for storing persistent data using SQLite
+"""
+Database layer for storing persistent data using SQLite
+"""
 
 import sqlite3
 
