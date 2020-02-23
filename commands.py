@@ -32,7 +32,7 @@ class AddBookmarkCommand:
         return "Bookmard added!"
 
 
-class ListBookmarksCommand:
+class ShowBookmarksCommand:
     #Note: This class is missing the ability to set a WHERE condition and select specific columns
     def __init__(self, order_by:str = "date_added"):
         self.order_by = order_by
