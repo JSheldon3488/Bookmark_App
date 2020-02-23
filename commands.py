@@ -9,6 +9,10 @@ db = database_manager("bookmarks.bd")
 
 #Also would like to be able to pass in a table name to have multiple tables
 class CreateBookmarksTableCommand:
+    '''
+    Currently all bookmarks have to columns of 'id', 'title', 'url', 'notes', and 'date_added'.
+        dictionary of data is 'column_name' : 'type + optional constraints/conditions'
+    '''
     def execute(self):
         db.create_table("bookmarks",
                         {
@@ -19,7 +23,19 @@ class CreateBookmarksTableCommand:
                         'date_added' : "text not null",
                         })
 
+
 class AddBookmarkCommand:
-    def execute(self, data):
+    def execute(self, data:dict):
+        # data must be a dict of 'column_name' : 'Correct value type' see CreateBookmarksTableCommand for details
         data['date_added'] = datetime.datetime.utcnow().isoformat()
         db.add('bookmarks', data)
+        return "Bookmard added!"
+
+
+class ListBookmarksCommand:
+    #Note: This class is missing the ability to set a WHERE condition and select specific columns
+    def __init__(self, order_by:str = "date_added"):
+        self.order_by = order_by
+
+    def execute(self):
+        return db.select('bookmarks', order_by= self.order_by).fetchall()
