@@ -34,3 +34,13 @@ class databaseManager:
         query = f'''DELETE FROM {tablename}
                         WHERE {delete_criteria};'''
         self._execute(query)
+
+    def select(self, tablename:str, columns:str = None, criteria:dict = None, order_by:str = None):
+        criteria = criteria or {}
+        query = f'SELECT * FROM {tablename}'
+        if criteria:
+            select_criteria = ' AND '.join([f'{column} = {filter_value}' for column,filter_value in criteria.items()])
+            query += f' WHERE {select_criteria}'
+        if order_by:
+            query += f' ORDER BY {order_by}'
+        return self._execute(query)
