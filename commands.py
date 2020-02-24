@@ -1,5 +1,6 @@
 import database_manager
 import datetime
+import sys
 
 """ Commands module for the Business Logic Layer of the CLI Bookmark APP"""
 # Note: Might make just a commands class with a bunch of methods like createbookmarkstable and addbookmark
@@ -39,3 +40,12 @@ class ShowBookmarksCommand:
 
     def execute(self):
         return db.select('bookmarks', order_by= self.order_by).fetchall()
+
+class DeleteBookmardCommand:
+    def execute(self, id:int):
+        db.delete('bookmarks', {'id': id})
+        return f'Successful deletion of record with ID: {id}'
+
+class QuitCommand:
+    def execute(self):
+        sys.exit()
