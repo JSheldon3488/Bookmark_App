@@ -1,4 +1,4 @@
-import database_manager
+from database_manager import databaseManager
 import datetime
 import sys
 
@@ -6,7 +6,7 @@ import sys
 # Note: Might make just a commands class with a bunch of methods like createbookmarkstable and addbookmark
 
 
-db = database_manager("bookmarks.bd")
+db = databaseManager("bookmarks.bd")
 
 #Also would like to be able to pass in a table name to have multiple tables
 class CreateBookmarksTableCommand:

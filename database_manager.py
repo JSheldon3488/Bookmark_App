@@ -19,8 +19,8 @@ class databaseManager:
             return cursor
 
     def create_table(self, tablename:str, columns:dict):
-        query = "CREATE TABLE IF NOT EXITS" + tablename + "(" + ", ".join([f'{name} {type}' for name,type in columns.items()]) + ");"
-        self._execute(query)
+        columns_with_types = [f'{column_name} {data_type}' for column_name, data_type in columns.items()]
+        self._execute(f'CREATE TABLE IF NOT EXISTS {tablename} ({", ".join(columns_with_types)});')
 
     def add(self, tablename:str, data:dict):
         placeholders = ", ".join('?'*len(data))
