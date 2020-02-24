@@ -1,5 +1,4 @@
 from database_manager import databaseManager
-import datetime
 import sys
 
 """ Commands module for the Business Logic Layer of the CLI Bookmark APP"""
@@ -28,7 +27,6 @@ class CreateBookmarksTableCommand:
 class AddBookmarkCommand:
     def execute(self, data:dict):
         # data must be a dict of 'column_name' : 'Correct value type' see CreateBookmarksTableCommand for details
-        data['date_added'] = datetime.datetime.utcnow().isoformat()
         db.add('bookmarks', data)
         return "Bookmard added!"
 
@@ -42,9 +40,10 @@ class ShowBookmarksCommand:
         return db.select('bookmarks', order_by= self.order_by).fetchall()
 
 class DeleteBookmardCommand:
-    def execute(self, id:int):
-        db.delete('bookmarks', {'id': id})
-        return f'Successful deletion of record with ID: {id}'
+    #Note sure I like this being an int and add being a dict
+    def execute(self, data:dict):
+        db.delete('bookmarks', data)
+        return f'Successful deletion of record with ID: {data["id"]}'
 
 class QuitCommand:
     def execute(self):
