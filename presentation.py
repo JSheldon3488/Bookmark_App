@@ -1,7 +1,6 @@
 import commands
 import database_manager
 import collections
-import datetime
 import os
 
 ''' Presentation Layer for the CLI Bookmark App'''
@@ -47,8 +46,7 @@ def get_add_data() -> dict:
     title = get_data("Enter Bookmark Title: ", True)
     url = get_data("Enter Bookmark URL: ", True)
     notes = get_data("Enter Bookmark Notes: ", False)
-    date_added = datetime.datetime.utcnow().isoformat()
-    return {'title': title, 'url': url, 'notes': notes, 'date_added': date_added}
+    return {'title': title, 'url': url, 'notes': notes}
 
 def get_delete_data() -> dict:
     id = get_data("Enter ID to delete: ", True)
@@ -56,10 +54,17 @@ def get_delete_data() -> dict:
         id = get_data("Enter ID to delete: ", True)
     return {'id': int(id)}
 
+def get_github_import_options():
+    return {'github_username' : get_data('GitHub username: ', required=True),
+            'preserve_timestamps': get_data('Preserve timestamps [Y/N]: ', required=False) in {'Y', 'y', None}}
+
 
 def clear_screen():
-    clear = 'cls' if os.name == 'nt' else 'clear'
-    os.system(clear)
+    print()
+    print()
+    input("Enter any key to return to the Menu: ")
+    print()
+    print()
 
 
 def application_loop():
@@ -67,14 +72,15 @@ def application_loop():
                     'B': Option("List bookmarks by Date", commands.ShowBookmarksCommand()),
                     'T': Option("List bookmarks by Title", commands.ShowBookmarksCommand(order_by="title")),
                     'D': Option("Delete a bookmark", commands.DeleteBookmardCommand(), prep_call=get_delete_data),
+                    'G': Option("Import GitHub stars", commands.ImportGitHubStarsCommand(), prep_call=get_github_import_options),
                     'Q': Option("Quit", commands.QuitCommand())
                     }
 
-    clear_screen()
     print_options(user_options)
     user_option = get_user_choice(user_options)
-    clear_screen()
     user_option.choose()
+    clear_screen()
+
 
 
 if __name__ == '__main__':
