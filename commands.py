@@ -2,20 +2,22 @@ from database_manager import databaseManager
 import sys
 import datetime
 import requests
+from abc import ABC, abstractmethod
 
 """ Commands module for the Business Logic Layer of the CLI Bookmark APP"""
-# Note: Might make just a commands class with a bunch of methods like createbookmarkstable and addbookmark
-
-
 db = databaseManager("bookmarks.bd")
 
-#Also would like to be able to pass in a table name to have multiple tables
-class CreateBookmarksTableCommand:
+class Command(ABC):
+    @abstractmethod
+    def execute(self,data:dict):
+        pass
+
+class CreateBookmarksTableCommand(Command):
     '''
     Currently all bookmarks have to columns of 'id', 'title', 'url', 'notes', and 'date_added'.
         dictionary of data is 'column_name' : 'type + optional constraints/conditions'
     '''
-    def execute(self):
+    def execute(self, data = None):
         db.create_table("bookmarks",
                         {
                         'id' : "integer primary key autoincrement",
@@ -26,7 +28,7 @@ class CreateBookmarksTableCommand:
                         })
 
 
-class AddBookmarkCommand:
+class AddBookmarkCommand(Command):
     def execute(self, data:dict, timestamp = None):
         # data must be a dict of 'column_name' : 'Correct value type' see CreateBookmarksTableCommand for details
         data['date_added'] = timestamp or datetime.datetime.utcnow().isoformat()
@@ -34,26 +36,26 @@ class AddBookmarkCommand:
         return "Bookmard added!"
 
 
-class ShowBookmarksCommand:
+class ShowBookmarksCommand(Command):
     #Note: This class is missing the ability to set a WHERE condition and select specific columns
     def __init__(self, order_by:str = "date_added"):
         self.order_by = order_by
 
-    def execute(self):
+    def execute(self, data = None):
         return db.select('bookmarks', order_by= self.order_by).fetchall()
 
-class DeleteBookmardCommand:
+class DeleteBookmardCommand(Command):
     #Note sure I like this being an int and add being a dict
     def execute(self, data:dict):
         db.delete('bookmarks', data)
         return f'Successful deletion of record with ID: {data["id"]}'
 
-class QuitCommand:
-    def execute(self):
+class QuitCommand(Command):
+    def execute(self, data = None):
         sys.exit()
 
 
-class ImportGitHubStarsCommand:
+class ImportGitHubStarsCommand(Command):
     def _extract_bookmark_info(self, repo:dict) -> dict:
         return {'title': repo['name'],
                 'url': repo['html_url'],
